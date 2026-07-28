@@ -14,9 +14,9 @@ Nguoi dung muc tieu la hoc sinh, sinh vien hoac nguoi moi di lam can tu van ban 
 | :--- | :---: | :--- |
 | Multi-step Reasoning | 4/5 | Tu van huong nghiep thuong can hieu so thich, diem manh, rang buoc, muc tieu va sau do tong hop thanh goi y nghe nghiep hoac lo trinh hoc. Cau hoi don gian van co the tra loi truc tiep nen khong cham toi da. |
 | Tool Interaction | 4/5 | Cac cau hoi ve matching nghe, ho so nghe va skill gap nen dua vao tool deterministic nhu `match_careers`, `get_career_profile`, `recommend_learning_path` de tranh noi chung chung. Tuy nhien mot so cau hoi khai niem khong can tool. |
-| Dynamic Decision | 4/5 | Buoc tiep theo phu thuoc vao Observation: neu profile day du thi xep hang nghe, neu thieu du lieu thi hoi them, neu career khong ho tro thi fallback an toan, neu co skill gap thi lap roadmap. |
+| Dynamic Decision | 5/5 | Buoc tiep theo phu thuoc vao Observation: neu profile day du thi xep hang nghe, neu thieu du lieu thi hoi them, neu career khong ho tro thi fallback an toan, neu co skill gap thi lap roadmap. |
 | Long Horizon | 3/5 | Phan lon tac vu trong lab ngan, nhung roadmap 8 tuan va ke hoach portfolio co tinh nhieu buoc. Chua phai autonomous agent dai han co memory lien tuc. |
-| Tong diem fit | 15/20 | ReAct phu hop cho cac cau hoi can du lieu co cau truc, matching, skill-gap va roadmap; chatbot baseline van du cho cau hoi khai niem don gian. |
+| Tong diem fit | 16/20 | ReAct phu hop cho cac cau hoi can du lieu co cau truc, matching, skill-gap va roadmap; chatbot baseline van du cho cau hoi khai niem don gian. |
 
 ## Ket luan ReAct vs Chatbot
 
