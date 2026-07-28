@@ -25,7 +25,10 @@ if sys.stdout.encoding != "utf-8":
     except Exception:
         pass
 
-from prompts import CHATBOT_BASELINE_PROMPT
+# Import các thành phần từ file của Role 2, Role 3 & Multi-Provider Adapter
+from tools import AVAILABLE_TOOLS
+from prompts import CHATBOT_BASELINE_PROMPT, MAX_ITERATIONS
+
 from providers import get_llm_provider
 
 load_dotenv()
@@ -85,6 +88,62 @@ def main() -> None:
     print("Baseline mode: no tools are imported or executed.\n")
 
     run_baseline_suite(provider, test_cases)
+    
+def execute_registered_tool(tool_name: str, args: dict):
+    """Chỉ thực thi tool có trong AVAILABLE_TOOLS, không tự tạo tool mới."""
+    if tool_name not in AVAILABLE_TOOLS:
+        return f"LỖI: Tool '{tool_name}' không tồn tại trong AVAILABLE_TOOLS."
+
+    try:
+        return AVAILABLE_TOOLS[tool_name](**args)
+    except NotImplementedError:
+        return f"LỖI: Tool '{tool_name}' mới có SPEC và chưa được implement."
+    except TypeError as exc:
+        return f"LỖI: Tham số không hợp lệ cho tool '{tool_name}': {exc}"
+    except Exception as exc:
+        return f"LỖI: Tool '{tool_name}' thất bại an toàn: {exc}"
+
+
+def run_react_agent(user_query: str, provider):
+    """
+    Dựng vòng lặp ReAct Agent (Thought -> Action -> Observation) có Guardrails.
+    """
+    print(f"\n🤖 [REACT AGENT] Câu hỏi: {user_query}")
+    step = 0
+    conversation = user_query
+    
+    while step < MAX_ITERATIONS:
+        step += 1
+        print(f"\n--- 🔄 Vòng lặp ReAct (Step {step}/{MAX_ITERATIONS}) ---")
+        
+        # Dự án hiện chỉ có một system prompt dùng chung cho cả hai luồng.
+        response = provider.generate(
+            conversation,
+            system_prompt=CHATBOT_BASELINE_PROMPT,
+        )
+        print(f"🤖 Model response:\n{response}")
+
+        if "Final Answer:" in response:
+            break
+
+        # Baseline provider có thể không sinh Action. Khi đó dừng an toàn.
+        action_line = next(
+            (line.strip() for line in response.splitlines()
+             if line.strip().startswith("Action:")),
+            None,
+        )
+        if not action_line:
+            print("🛡️ SAFE FALLBACK: Không phát hiện Action hợp lệ, dừng agent.")
+            break
+
+        # App chỉ thực thi action đã được parser/adapter cung cấp.
+        # Chưa tự suy đoán tham số từ câu trả lời của model.
+        print(f"🛡️ SAFE FALLBACK: Chưa có parser Action an toàn: {action_line}")
+        break
+
+    else:
+        print(f"🛡️ GUARDRAIL TRIGGERED: Đã đạt giới hạn tối đa {MAX_ITERATIONS} bước.")
+    
 
 
 if __name__ == "__main__":
