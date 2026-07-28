@@ -20,6 +20,19 @@ Read these files before changing behavior:
 - `config/test_cases.json` for required scenarios.
 - `docs/trace_eval.md` for trace evidence expected by Role 5.
 
+## Common Code Rules
+
+Apply these rules when editing `src/prompts.py` or `src/app.py`:
+
+- Prefer a simple, debuggable ReAct loop over complex orchestration.
+- Do not hardcode one demo answer or one weather/flight path; run from `config/test_cases.json`.
+- Keep baseline and ReAct paths separate. Baseline must use zero tools.
+- The app, not the LLM, must create `Observation` after executing a real function from `AVAILABLE_TOOLS`.
+- Validate tool names and arguments before execution; convert parser/tool errors into readable `Observation: LOI: ...` messages.
+- Prevent repeated identical actions and stop at `MAX_ITERATIONS` with a safe fallback.
+- Keep console output structured for Role 5: question, baseline, trace, final answer.
+- Do not claim guaranteed job, salary, admission, diagnosis, or `100% phu hop` in prompts or fallback text.
+- Do not commit `.env`, API keys, tokens, generated cache, or `__pycache__`.
 ## Prompt Requirements
 
 In `src/prompts.py`, maintain:

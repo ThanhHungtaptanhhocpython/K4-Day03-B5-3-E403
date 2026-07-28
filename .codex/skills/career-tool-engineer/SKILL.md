@@ -19,6 +19,19 @@ Read but do not casually edit:
 - `src/prompts.py` to ensure prompt tool descriptions match the registry.
 - `src/app.py` to confirm parser/executor expectations.
 
+## Common Code Rules
+
+Apply these rules when editing `src/tools.py`:
+
+- Prefer clear, inspectable Python over clever abstractions.
+- Keep the implementation deterministic and offline-friendly unless the user explicitly asks for a live API.
+- Do not leave weather, flight, or unrelated demo tools in the final career guidance tool registry.
+- Return strings from tools; use valid JSON strings when returning structured multi-field data.
+- Handle invalid business inputs with `LOI:` or `CANH_BAO:` strings instead of uncaught exceptions.
+- Keep side effects out of tools. Tools should read local sample data and return recommendations, not write files or call external services.
+- Do not make absolute career claims such as guaranteed job, guaranteed salary, guaranteed admission, diagnosis, or `100% phu hop`.
+- Keep `AVAILABLE_TOOLS`, prompt tool descriptions, app parser expectations, and test case expected behavior in sync.
+- Do not commit `.env`, API keys, tokens, generated cache, or `__pycache__`.
 ## Tool Design Rules
 
 Build deterministic, offline-friendly tools. The lab should run without live APIs unless the user explicitly adds one.

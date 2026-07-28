@@ -21,6 +21,18 @@ Coordinate with:
 
 Do not edit `src/tools.py`, `src/prompts.py`, or `src/app.py` unless the user explicitly asks.
 
+## Common Project Rules
+
+Apply these rules while producing test, evaluation, or report artifacts:
+
+- Keep the project topic consistent: career guidance chatbot, not weather or flights.
+- Keep tool names in test cases identical to `AVAILABLE_TOOLS` in `src/tools.py`.
+- Do not invent tool Observations in reports; only record output actually printed by the app or returned by a tool.
+- Write JSON as valid machine-readable JSON: no comments, no trailing commas, stable field names.
+- Treat career advice as guidance, not certainty. Do not require the agent to guarantee jobs, salary, admission, or perfect fit.
+- Include at least one simple no-tool case, one tool-grounded case, one two-tool case, and one guardrail/fallback case.
+- Keep trace logs compact enough for reviewers to inspect the actual `Thought -> Action -> Observation -> Final Answer` path.
+- Do not commit `.env`, API keys, personal identifiers beyond team member names already assigned in project docs, or cache files.
 ## Product Frame
 
 Define the product as a career orientation chatbot that helps a student or early-career user:
