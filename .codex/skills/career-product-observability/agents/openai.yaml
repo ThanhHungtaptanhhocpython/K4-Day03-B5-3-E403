@@ -1,0 +1,4 @@
+interface:
+  display_name: "Career Product + Observability"
+  short_description: "Design test cases and trace evaluation"
+  default_prompt: "Use $career-product-observability to design career chatbot tests and trace evaluation."

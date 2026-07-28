@@ -1,0 +1,4 @@
+interface:
+  display_name: "Career Tool Engineer"
+  short_description: "Build grounded career guidance tools"
+  default_prompt: "Use $career-tool-engineer to implement tools for the career guidance ReAct agent."

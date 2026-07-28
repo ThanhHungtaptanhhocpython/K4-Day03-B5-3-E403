@@ -1,0 +1,4 @@
+interface:
+  display_name: "Career Prompt + Integrator"
+  short_description: "Prompt and wire the career ReAct app"
+  default_prompt: "Use $career-prompt-integrator to write prompts and integrate the career ReAct loop."
