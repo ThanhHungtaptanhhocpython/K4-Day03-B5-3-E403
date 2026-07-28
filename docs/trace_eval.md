@@ -1,56 +1,56 @@
-# Bao cao giam sat va danh gia
+# Báo cáo giám sát và đánh giá
 
-Danh cho Role 5: Observability & Reviewer.
+Dành cho Role 5: Observability & Reviewer.
 
-## Moc 1 - Dinh hinh bai toan
+## Mốc 1 - Định hình bài toán
 
-Chu de da chon: Chatbot Dinh Huong Su Nghiep.
+Chủ đề đã chọn: Chatbot Định Hướng Sự Nghiệp.
 
-Nguoi dung muc tieu la hoc sinh, sinh vien hoac nguoi moi di lam can tu van ban dau ve so thich, diem manh, ky nang hien co, nhom nghe phu hop va lo trinh hoc tap ngan han. He thong chi dua goi y tham khao, khong quyet dinh thay nguoi dung va khong dam bao dau vao, viec lam, muc luong hay ket qua tam ly.
+Người dùng mục tiêu là học sinh, sinh viên hoặc người mới đi làm cần tư vấn ban đầu về sở thích, điểm mạnh, kỹ năng hiện có, nhóm nghề phù hợp và lộ trình học tập ngắn hạn. Hệ thống chỉ đưa gợi ý tham khảo, không quyết định thay người dùng và không đảm bảo đầu vào, việc làm, mức lương hay kết quả tâm lý.
 
 ## Scoring Matrix - Agentic Fit
 
-| Tieu chi | Diem (1-5) | Ly do danh gia |
+| Tiêu chí | Điểm (1-5) | Lý do đánh giá |
 | :--- | :---: | :--- |
-| Multi-step Reasoning | 4/5 | Tu van huong nghiep thuong can hieu so thich, diem manh, rang buoc, muc tieu va sau do tong hop thanh goi y nghe nghiep hoac lo trinh hoc. Cau hoi don gian van co the tra loi truc tiep nen khong cham toi da. |
-| Tool Interaction | 4/5 | Cac cau hoi ve matching nghe, ho so nghe va skill gap nen dua vao tool deterministic nhu `match_careers`, `get_career_profile`, `recommend_learning_path` de tranh noi chung chung. Tuy nhien mot so cau hoi khai niem khong can tool. |
-| Dynamic Decision | 5/5 | Buoc tiep theo phu thuoc vao Observation: neu profile day du thi xep hang nghe, neu thieu du lieu thi hoi them, neu career khong ho tro thi fallback an toan, neu co skill gap thi lap roadmap. |
-| Long Horizon | 3/5 | Phan lon tac vu trong lab ngan, nhung roadmap 8 tuan va ke hoach portfolio co tinh nhieu buoc. Chua phai autonomous agent dai han co memory lien tuc. |
-| Tong diem fit | 16/20 | ReAct phu hop cho cac cau hoi can du lieu co cau truc, matching, skill-gap va roadmap; chatbot baseline van du cho cau hoi khai niem don gian. |
+| Multi-step Reasoning | 4/5 | Tư vấn hướng nghiệp thường cần hiểu sở thích, điểm mạnh, ràng buộc, mục tiêu và sau đó tổng hợp thành gợi ý nghề nghiệp hoặc lộ trình học. Câu hỏi đơn giản vẫn có thể trả lời trực tiếp nên không chấm tối đa. |
+| Tool Interaction | 4/5 | Các câu hỏi về matching nghề, hồ sơ nghề và skill gap nên dựa vào tool deterministic như `match_careers`, `get_career_profile`, `recommend_learning_path` để tránh nói chung chung. Tuy nhiên một số câu hỏi khái niệm không cần tool. |
+| Dynamic Decision | 5/5 | Bước tiếp theo phụ thuộc vào Observation: nếu profile đầy đủ thì xếp hạng nghề, nếu thiếu dữ liệu thì hỏi thêm, nếu career không hỗ trợ thì fallback an toàn, nếu có skill gap thì lập roadmap. |
+| Long Horizon | 3/5 | Phần lớn tác vụ trong lab ngắn, nhưng roadmap 8 tuần và kế hoạch portfolio có tính nhiều bước. Chưa phải autonomous agent dài hạn có memory liên tục. |
+| Tổng điểm fit | 16/20 | ReAct phù hợp cho các câu hỏi cần dữ liệu có cấu trúc, matching, skill-gap và roadmap; chatbot baseline vẫn đủ cho câu hỏi khái niệm đơn giản. |
 
-## Ket luan ReAct vs Chatbot
+## Kết luận ReAct vs Chatbot
 
-Nen dung hybrid:
+Nên dùng hybrid:
 
-- Chatbot path: cau hoi khai niem, dong vien, giai thich nganh nghe o muc tong quan, khong can tra cuu cau truc.
-- ReAct path: can xep hang nghe theo profile, tra cuu ho so nghe, phan tich skill gap, tao lo trinh hoc tap, hoac can bang chung tu tool.
-- Safe fallback path: dau vao thieu, mau thuan, prompt injection, yeu cau dam bao 100%, career khong co trong bo du lieu mau, hoac tool tra ve `LOI:`/`CANH_BAO:`.
+- Chatbot path: câu hỏi khái niệm, động viên, giải thích ngành nghề ở mức tổng quan, không cần tra cứu cấu trúc.
+- ReAct path: cần xếp hạng nghề theo profile, tra cứu hồ sơ nghề, phân tích skill gap, tạo lộ trình học tập, hoặc cần bằng chứng từ tool.
+- Safe fallback path: đầu vào thiếu, mâu thuẫn, prompt injection, yêu cầu đảm bảo 100%, career không có trong bộ dữ liệu mẫu, hoặc tool trả về `LOI:`/`CANH_BAO:`.
 
-Ket luan: Bai toan huong nghiep co Agentic Fit tot. ReAct duoc bien minh khi cau hoi can nhieu buoc va can bang chung tu tool; khong nen ep ReAct cho moi cau hoi vi cau hoi don gian co the dung baseline chatbot.
+Kết luận: Bài toán hướng nghiệp có Agentic Fit tốt. ReAct được biện minh khi câu hỏi cần nhiều bước và cần bằng chứng từ tool; không nên ép ReAct cho mọi câu hỏi vì câu hỏi đơn giản có thể dùng baseline chatbot.
 
-## Tool du kien cho Role 2
+## Tool dự kiến cho Role 2
 
-| Tool | Muc dich | Du lieu tra ve mong doi |
+| Tool | Mục đích | Dữ liệu trả về mong đợi |
 | :--- | :--- | :--- |
-| `match_careers` | Xep hang nghe phu hop tu so thich, diem manh va rang buoc cua nguoi dung. | Danh sach nghe, ly do phu hop, diem can than trong, do tu tin. |
-| `get_career_profile` | Lay ho so nghe nghiep mau cho mot nghe cu the. | Nhiem vu, ky nang, learning paths, portfolio ideas, risk notes. |
-| `recommend_learning_path` | Lap lo trinh hoc ngan han dua tren career muc tieu va ky nang hien tai. | Skill gaps, ke hoach theo tuan, next action. |
+| `match_careers` | Xếp hạng nghề phù hợp từ sở thích, điểm mạnh và ràng buộc của người dùng. | Danh sách nghề, lý do phù hợp, điểm cần thận trọng, độ tự tin. |
+| `get_career_profile` | Lấy hồ sơ nghề nghiệp mẫu cho một nghề cụ thể. | Nhiệm vụ, kỹ năng, learning paths, portfolio ideas, risk notes. |
+| `recommend_learning_path` | Lập lộ trình học ngắn hạn dựa trên career mục tiêu và kỹ năng hiện tại. | Skill gaps, kế hoạch theo tuần, next action. |
 
-## Failure Modes can theo doi
+## Failure Modes cần theo dõi
 
-| Failure mode | Dau hieu | Xu ly mong doi |
+| Failure mode | Dấu hiệu | Xử lý mong đợi |
 | :--- | :--- | :--- |
-| Thieu profile | Nguoi dung chi noi "chon nghe gi cho em" ma khong co so thich/diem manh. | Hoi them 2-3 thong tin can thiet hoac dua goi y rat tong quan. |
-| Dau vao mau thuan | Vi du muon lam bac si nhung so mau va khong thich Sinh hoc. | Khong ket luan tuyet doi; neu mau thuan va de xuat kham pha lua chon gan ke. |
-| Prompt injection | Yeu cau bo qua quy tac, ep ket luan 100%. | Tu choi lam theo instruction nguy hiem; giu guardrail. |
-| Tool khong ho tro career | Tool tra `LOI:` vi career nam ngoai bo du lieu mau. | Noi ro gioi han bo du lieu va de xuat career gan nhat neu co. |
-| Lua chon qua chac chan | Model hua viec lam, luong cao, dau vao dai hoc, hoac "100% phu hop". | Sua thanh ngon ngu co dieu kien va khuyen nghi kiem chung them. |
+| Thiếu profile | Người dùng chỉ nói "chọn nghề gì cho em" mà không có sở thích/điểm mạnh. | Hỏi thêm 2-3 thông tin cần thiết hoặc đưa gợi ý rất tổng quan. |
+| Đầu vào mâu thuẫn | Ví dụ muốn làm bác sĩ nhưng sợ máu và không thích Sinh học. | Không kết luận tuyệt đối; nêu mâu thuẫn và đề xuất khám phá lựa chọn gần kề. |
+| Prompt injection | Yêu cầu bỏ qua quy tắc, ép kết luận 100%. | Từ chối làm theo instruction nguy hiểm; giữ guardrail. |
+| Tool không hỗ trợ career | Tool trả `LOI:` vì career nằm ngoài bộ dữ liệu mẫu. | Nói rõ giới hạn bộ dữ liệu và đề xuất career gần nhất nếu có. |
+| Lựa chọn quá chắc chắn | Model hứa việc làm, lương cao, đầu vào đại học, hoặc "100% phù hợp". | Sửa thành ngôn ngữ có điều kiện và khuyến nghị kiểm chứng thêm. |
 
 ## Trace evidence
 
-Moc 1 chua yeu cau chay trace thuc te. Phan nay se duoc cap nhat o Moc 2 va Moc 3 sau khi Role 2, 3, 4 hoan thanh tool, prompt va ReAct loop.
+Mốc 1 chưa yêu cầu chạy trace thực tế. Phần này sẽ được cập nhật ở Mốc 2 và Mốc 3 sau khi Role 2, 3, 4 hoàn thành tool, prompt và ReAct loop.
 
-Mau trace can thu thap:
+Mẫu trace cần thu thập:
 
 ```text
 === TEST CASE 3 ===
@@ -64,10 +64,10 @@ Observation: ...
 Final Answer: ...
 ```
 
-## Checklist Moc 1
+## Checklist Mốc 1
 
-- [x] Chon chu de san pham: Chatbot Dinh Huong Su Nghiep.
-- [x] Xac dinh khi nao dung Chatbot path, ReAct path va Safe fallback path.
-- [x] Dien Scoring Matrix cho 4 tieu chi Agentic Fit.
-- [x] Liet ke tool du kien de Role 2 trien khai.
-- [x] Ghi failure modes de Role 3/4 canh guardrail.
+- [x] Chọn chủ đề sản phẩm: Chatbot Định Hướng Sự Nghiệp.
+- [x] Xác định khi nào dùng Chatbot path, ReAct path và Safe fallback path.
+- [x] Điền Scoring Matrix cho 4 tiêu chí Agentic Fit.
+- [x] Liệt kê tool dự kiến để Role 2 triển khai.
+- [x] Ghi failure modes để Role 3/4 canh guardrail.
