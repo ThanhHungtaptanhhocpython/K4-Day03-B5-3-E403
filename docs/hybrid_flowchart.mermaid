@@ -1,0 +1,45 @@
+flowchart TD
+    A["Câu hỏi người dùng"] --> B{"Có rủi ro an toàn?"}
+
+    B -->|"Prompt injection, yêu cầu đảm bảo 100%, dữ liệu mâu thuẫn"| S["Safe fallback path"]
+    S --> S1["Từ chối phần không an toàn"]
+    S1 --> S2["Nêu giới hạn: chỉ tư vấn tham khảo, không hứa việc làm/lương/đầu vào"]
+    S2 --> S3["Hỏi thêm thông tin hoặc đề xuất hướng an toàn hơn"]
+
+    B -->|"Không có rủi ro rõ ràng"| C{"Câu hỏi thuộc loại nào?"}
+
+    C -->|"Đơn giản: khái niệm, động viên, giải thích tổng quan"| D["Chatbot path"]
+    D --> D1["LLM trả lời trực tiếp"]
+    D1 --> D2["Không gọi tool"]
+    D2 --> D3["Final Answer: gợi ý ngắn gọn, có điều kiện"]
+
+    C -->|"Phức tạp: cần profile, matching, tra cứu, skill gap, roadmap, job/course"| R["ReAct Agent path"]
+    R --> T["Thought: xác định thiếu dữ liệu và mục tiêu"]
+    T --> U{"Chọn Action phù hợp"}
+
+    U -->|"Hồ sơ người dùng"| P["get_user_profile / save_user_profile"]
+    U -->|"Đánh giá tính cách"| A1["run_personality_assessment"]
+    U -->|"Tìm nghề"| C1["search_careers"]
+    U -->|"Xếp hạng nghề"| M["match_career_recommendations"]
+    U -->|"Khóa học / trường"| E["search_courses_schools"]
+    U -->|"Thông tin tham khảo"| W["web_search"]
+    U -->|"Tin tuyển dụng"| J["search_jobs"]
+    U -->|"Tạo CV"| V["generate_cv"]
+    U -->|"Roadmap nghề nghiệp"| G["generate_career_roadmap"]
+    U -->|"Lưu memory phiên"| N["save_conversation_memory"]
+
+    P --> O["Observation: kết quả tool"]
+    A1 --> O
+    C1 --> O
+    M --> O
+    E --> O
+    W --> O
+    J --> O
+    V --> O
+    G --> O
+    N --> O
+
+    O --> Q{"Observation đủ để trả lời?"}
+    Q -->|"Đủ"| F["Final Answer: tổng hợp từ Observation, không kết luận tuyệt đối"]
+    Q -->|"Chưa đủ và còn lượt"| T
+    Q -->|"Thiếu dữ liệu, tool lỗi, hoặc hết MAX_ITERATIONS"| S

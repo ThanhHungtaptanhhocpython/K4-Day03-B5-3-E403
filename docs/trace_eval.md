@@ -13,7 +13,7 @@ Người dùng mục tiêu là học sinh, sinh viên hoặc người mới đi 
 | Tiêu chí | Điểm (1-5) | Lý do đánh giá |
 | :--- | :---: | :--- |
 | Multi-step Reasoning | 4/5 | Tư vấn hướng nghiệp thường cần hiểu sở thích, điểm mạnh, ràng buộc, mục tiêu và tổng hợp thành gợi ý nghề nghiệp hoặc lộ trình học. Câu hỏi khái niệm đơn giản vẫn có thể trả lời trực tiếp nên không chấm tối đa. |
-| Tool Interaction | 4/5 | Các câu hỏi về matching nghề, hồ sơ nghề và skill gap nên dựa vào tool deterministic để tránh nói chung chung. Một số câu hỏi khái niệm không cần tool. |
+| Tool Interaction | 4/5 | Các câu hỏi về hồ sơ người dùng, tìm nghề, xếp hạng nghề, khóa học, tin tuyển dụng, CV và roadmap nên dựa vào tool deterministic như `get_user_profile`, `search_careers`, `match_career_recommendations`, `search_courses_schools`, `search_jobs`, `generate_cv`, `generate_career_roadmap`. Một số câu hỏi khái niệm không cần tool. |
 | Dynamic Decision | 5/5 | Bước tiếp theo phụ thuộc vào Observation: nếu profile đầy đủ thì xếp hạng nghề, nếu thiếu dữ liệu thì hỏi thêm, nếu career không hỗ trợ thì fallback an toàn, nếu có skill gap thì lập roadmap. |
 | Long Horizon | 3/5 | Phần lớn tác vụ trong lab ngắn, nhưng roadmap 8 tuần và kế hoạch portfolio có tính nhiều bước. Chưa phải autonomous agent dài hạn có memory liên tục. |
 | Tổng điểm fit | 16/20 | ReAct phù hợp cho các câu hỏi cần dữ liệu có cấu trúc, matching, skill-gap và roadmap; chatbot baseline vẫn đủ cho câu hỏi khái niệm đơn giản. |
@@ -23,20 +23,28 @@ Người dùng mục tiêu là học sinh, sinh viên hoặc người mới đi 
 Nên dùng hybrid:
 
 - Chatbot path: câu hỏi khái niệm, động viên, giải thích ngành nghề ở mức tổng quan, không cần tra cứu cấu trúc.
-- ReAct path: cần xếp hạng nghề theo profile, tra cứu hồ sơ nghề, phân tích skill gap, tạo lộ trình học tập, hoặc cần bằng chứng từ tool.
+- ReAct path: cần đọc/lưu profile, tìm nghề bằng `search_careers`, xếp hạng bằng `match_career_recommendations`, tìm khóa học bằng `search_courses_schools`, kiểm tra việc làm bằng `search_jobs`, tạo CV bằng `generate_cv`, tạo roadmap bằng `generate_career_roadmap`, hoặc cần tham khảo ngoài bằng `web_search`.
 - Safe fallback path: đầu vào thiếu, mâu thuẫn, prompt injection, yêu cầu đảm bảo 100%, career không có trong bộ dữ liệu mẫu, hoặc tool trả về lỗi/cảnh báo.
 
 Kết luận: Bài toán hướng nghiệp có Agentic Fit tốt. ReAct được biện minh khi câu hỏi cần nhiều bước và cần bằng chứng từ tool; không nên ép ReAct cho mọi câu hỏi vì câu hỏi đơn giản có thể dùng baseline chatbot.
 
-## Tool dự kiến cho Role 2
+## Tool hiện tại trong `src/tools.py`
 
-| Tool | Mục đích | Dữ liệu trả về mong đợi |
+Danh sách dưới đây được đối chiếu theo `AVAILABLE_TOOLS`, không dùng tên tool cũ.
+
+| Tool | Mục đích quan sát được | Dùng trong luồng nào |
 | :--- | :--- | :--- |
-| `match_careers` | Xếp hạng nghề phù hợp từ sở thích, điểm mạnh và ràng buộc của người dùng. | Danh sách nghề, lý do phù hợp, điểm cần thận trọng, độ tự tin. |
-| `get_career_profile` | Lấy hồ sơ nghề nghiệp mẫu cho một nghề cụ thể. | Nhiệm vụ, kỹ năng, learning paths, portfolio ideas, risk notes. |
-| `recommend_learning_path` | Lập lộ trình học ngắn hạn dựa trên career mục tiêu và kỹ năng hiện tại. | Skill gaps, kế hoạch theo tuần, next action. |
-
-Ghi chú mốc 3: registry hiện tại trong `src/tools.py` đang dùng các tool khác: `search_careers`, `match_career_recommendations`, `generate_career_roadmap`, `web_search`, ... Vì vậy một số expected tool trong `config/test_cases.json` chưa khớp hoàn toàn với implementation hiện tại.
+| `get_user_profile` | Lấy hồ sơ người dùng đã lưu theo `user_id`. | ReAct path khi cần dữ liệu cá nhân trước khi tư vấn. |
+| `save_user_profile` | Lưu/cập nhật học vấn, kỹ năng, sở thích, mục tiêu nghề nghiệp. | ReAct path khi người dùng cung cấp profile mới. |
+| `run_personality_assessment` | Chấm mock MBTI/Holland/DISC từ danh sách câu trả lời. | ReAct path khi cần khám phá tính cách/sở thích. |
+| `search_careers` | Tìm nghề trong mock career database theo keyword và filter whitelist. | ReAct path cho tra cứu nghề. |
+| `match_career_recommendations` | Xếp hạng nghề từ `user_profile` và `career_list`. | ReAct path cho matching nghề dựa trên Observation. |
+| `search_courses_schools` | Tìm khóa học/trường theo nghề, level và location. | ReAct path cho khuyến nghị học tập. |
+| `web_search` | Mock web search, trả kết quả tham khảo cố định, không gọi mạng thật. | ReAct fallback khi cần thông tin tham khảo ngoài database mock. |
+| `search_jobs` | Tìm tin tuyển dụng mock theo job title, location, experience level. | ReAct path khi cần kiểm tra thị trường việc làm mẫu. |
+| `generate_cv` | Sinh CV dạng `.txt` từ `user_profile` hợp lệ. | ReAct path cho tác vụ tạo artifact. |
+| `generate_career_roadmap` | Sinh roadmap mock theo tình trạng hiện tại, career mục tiêu và timeframe. | ReAct path cho lộ trình học/nghề nghiệp. |
+| `save_conversation_memory` | Lưu tóm tắt phiên hội thoại sau khi lọc prompt injection. | ReAct path cho memory an toàn. |
 
 ## Failure Modes cần theo dõi
 
@@ -161,11 +169,20 @@ Kết luận edge case: Agent vượt qua guardrail về mặt an toàn nội du
 
 | Failure mode | Bằng chứng | Hướng xử lý đề xuất |
 | :--- | :--- | :--- |
-| Test case và registry tool chưa đồng bộ | `config/test_cases.json` kỳ vọng `match_careers`, `get_career_profile`, `recommend_learning_path`; `AVAILABLE_TOOLS` hiện không có các tên này. | Role 1/2 cần thống nhất lại tên tool hoặc thêm alias tương thích. |
+| Tool routing chưa tối ưu | Lần chạy mốc 3 cho thấy agent dùng `search_careers` cho case đơn giản và dùng `web_search` lặp lại ở case roadmap. | Role 3/4 cần siết prompt routing: câu đơn giản đi Chatbot path; case Data Analyst nên ưu tiên `search_careers` rồi `generate_career_roadmap`. |
 | Agent gọi tool cho câu đơn giản | Test case 1 gọi `search_careers` dù expected behavior là không tool. | Role 3 cần bổ sung routing rule: câu simple nên trả `Final Answer` trực tiếp. |
-| Tool search không đủ dữ liệu | Test case 3 `search_careers` trả `total_found: 0`; test case 4 `web_search` trả kết quả mock chung. | Role 2 cần bổ sung dữ liệu nghề sáng tạo - công nghệ và profile Data Analyst/roadmap. |
+| Tool search không đủ dữ liệu | Test case 3 `search_careers` trả `total_found: 0`; test case 4 `web_search` trả kết quả mock chung. | Role 2 cần bổ sung dữ liệu nghề sáng tạo - công nghệ và dùng đúng chuỗi `search_careers` -> `match_career_recommendations` -> `generate_career_roadmap` khi cần roadmap. |
 | Parser fallback do thiếu nhãn `Final Answer:` | Edge case 5 có nội dung từ chối an toàn nhưng không có `Final Answer:`. | Role 3/4 cần nhấn mạnh nếu không gọi tool thì bắt buộc dùng `Final Answer:`. |
 
+## Hybrid flowchart evidence
+
+Đã bổ sung sơ đồ phân luồng tại `docs/hybrid_flowchart.mermaid`.
+
+Sơ đồ thể hiện ba nhánh chính:
+
+- Chatbot path: câu hỏi đơn giản, khái niệm, động viên hoặc giải thích tổng quan; trả lời trực tiếp, không gọi tool.
+- ReAct Agent path: câu hỏi phức tạp cần profile, career matching, khóa học/trường, tin tuyển dụng, CV, roadmap hoặc thông tin tham khảo; dùng đúng tool trong `AVAILABLE_TOOLS`.
+- Safe fallback path: prompt injection, yêu cầu đảm bảo 100%, dữ liệu mâu thuẫn, thiếu dữ liệu, tool lỗi hoặc hết `MAX_ITERATIONS`.
 ## Trace evidence
 
 Mốc 3 đã có bằng chứng thật cho chuỗi `Thought -> Action -> Observation` ở test case 3 và kiểm tra guardrail ở test case 5. Không có Observation giả lập trong báo cáo; các Observation được ghi từ output chạy app.
@@ -182,3 +199,4 @@ Mốc 3 đã có bằng chứng thật cho chuỗi `Thought -> Action -> Observa
 - [x] Mốc 2: Nhận xét baseline có/không có ảo giác và giới hạn khi không dùng tool.
 - [x] Mốc 3: Trích xuất chuỗi `Thought -> Action -> Observation` thật vào báo cáo.
 - [x] Mốc 3: Kiểm tra edge case bằng guardrail và ghi kết luận pass/fail.
+- [x] Mốc 3: Vẽ Hybrid Flowchart vào docs/hybrid_flowchart.mermaid.
